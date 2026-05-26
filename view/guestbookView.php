@@ -15,6 +15,48 @@
 <body>
 <h1>TI2 | Livre d'or</h1>
 <!-- Formulaire d'ajout d'un message -->
+ <form id="contactForm" class="form-card" novalidate method="post">
+     <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+
+
+  <div class="field">
+    <label for="firstname">Nom</label>
+    <input type="text" id="firstname" name="firstname" placeholder="John" value="<?= e($_POST['firstname'] ?? '') ?>">
+    <small class="field-error"></small>
+  </div>
+
+  <div class="field">
+    <label for="lastname">Prénom</label>
+    <input type="text" id="lastname" name="lastname" placeholder="David" value="<?= e($_POST['lastname'] ?? '') ?>">
+    <small class="field-error"></small>
+  </div>
+
+  <div class="field">
+    <label for="usermail">Email</label>
+    <input type="email" id="usermail" name="usermail" placeholder="johndavid@email.com" value="<?= e($_POST['usermail'] ?? '') ?>">
+    <small class="field-error"></small>
+  </div>
+
+  <div class="field">
+    <label for="phone">Téléphone</label>
+    <input type="text" id="phone" name="phone" placeholder="+32471234567" value="<?= e($_POST['phone'] ?? '') ?>">
+    <small class="field-error"></small>
+  </div>
+
+  <div class="field">
+    <label for="postcode">Code Postal</label>
+    <input type="text" id="postcode" name="postcode" value="<?= e($_POST['postcode'] ?? '') ?>">
+    <small class="field-error"></small>
+  </div>
+
+   <div class="field">
+    <label for="commentaire">message</label>
+    <textarea id="commentaire" name="commentaire" rows="6"><?= e($_POST['message'] ?? '') ?></textarea>
+    <small class="field-error"><?= e($errors['commentaire'] ?? '') ?></small>
+  </div>
+
+  <button class="btn" type="submit">Envoyer</button>
+</form>
 <h2>Ici le formulaire</h2>
 <!-- Si pas de message -->
 <h3>Pas encore de message</h3>
