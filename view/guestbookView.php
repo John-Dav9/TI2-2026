@@ -55,15 +55,55 @@
 
   <button class="btn" type="submit">Envoyer</button>
 </form>
-<h2>Ici le formulaire</h2>
 <!-- Si pas de message -->
 <h3>Pas encore de message</h3>
 <!-- Si 1 message -->
 <h3>Il y a 1 message</h3>
 <!-- Si plusieurs messages -->
 <h3>Il y a X messages</h3>
-
-<!-- Pagination (BONUS) -->
+<div>
+    <section class="section_wrapper">
+        <section class="comments_section"> 
+            <?php
+                $nbComment = $countComments;
+                if (empty($nbComment)):
+            ?>
+            <h2>Il n'y a pas encore de messages</h2>
+            <?php
+                // il y a au mois un message
+                else:
+                    // preparation du pluriel si on a plus d'un message
+                    $pluriel = $nbComment > 1 ? "s" : "";
+                
+                // affichage de la pagination    
+                echo $pagination; 
+            ?>
+            
+        </section>
+         <section class="comments_section">
+         <h2>Message<?= $pluriel ?> récent<?= $pluriel ?> (<?= $nbComment ?>)</h2>
+        <?php
+            foreach ($comments as $comment):
+        ?>
+        <div class="comments_card">
+            <div class="comment_avatar">
+                <?= strtoupper(substr($comment['email'], 0, 2)) ?>
+            </div>
+            <div class="comment_body">
+                <div class="comment_meta">
+                    <span class="write_by"><?= htmlspecialchars($comment['email']) ?></span>
+                    <span class="comment_date"><?= $comment['post_date'] ?></span>
+                </div>
+                <p><?= nl2br(htmlspecialchars($comment['text_comment'])) ?></p>
+            </div>
+        </div>
+        <?php
+            endforeach;
+            // affichage de la pagination    
+                echo $pagination; 
+            endif;
+        ?>
+    </div>
 
 <!-- Liste des messages -->
 <ul>
