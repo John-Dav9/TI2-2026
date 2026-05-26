@@ -145,14 +145,25 @@ function getNbTotalGuestbook(PDO $db): int
  * en utilisant une requête préparée (injection SQL), n'affiche que les messages
  * de la page courante
  */
-function getGuestbookPagination(PDO $db, int $pageActu=1, int $limit=5): array
+function getGuestbookPagination(PDO $db, int $pageActu=1, int $limit=5,): array
 {
- 
+    $offset = ($pageActu - 1) * 5;
+    $limit = 5;
+    // Requête préparée obligatoire !
+    $sql = "SELECT * FROM `guestbook` ORDER BY `post_date` DESC LIMIT :offset, :limit;";
+    $stmt = $db->prepare($sql);
+    // Le $offset et le $limit sont des entiers, il faut donc les passer
+    $stmt->bindValue("offset",$offset,PDO::PARAM_INT);
+    $stmt->bindValue("limit",$limit,PDO::PARAM_INT);
+    $stmt->execute();
+    $return = $stmt->fetchAll();
+    $stmt->closeCursor();
+    return $return;
     // en paramètres de la requête préparée en tant qu'entiers !
     // si la requête a réussi,
     // bonne pratique, fermez le curseur
     // renvoyer le tableau de(s) message(s) (vide si pas de résultats)
-    return [];
+    // return [];
 }
 
  // pour touver l'offset (départ)
