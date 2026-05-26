@@ -125,11 +125,12 @@ function getAllGuestbook(PDO $db): array
  */
 function getNbTotalGuestbook(PDO $db): int
 {
-   
+    $stmt = $db->query("SELECT COUNT(*) AS count FROM commentaire");
+    return (int) $stmt->fetch()['count'];
 
     // bonne pratique, fermez le curseur,
     // renvoyez le nombre total de messages
-    return 0;
+    // return 0;
 
 }
 // SELECTION de messages dans le livre d'or par ordre de date croissante
