@@ -107,16 +107,10 @@ if (!isset($_GET['p'])){
     include URL_BASE . "/view/guestbookView.php";
 }else {
      
-    //  include ROOT_PROJECT."/view/error404.php";
 }
 
-// bonne pratique, fermeture de connexion
 $connectDB=null;
 
 /**************************
  * Fin du Bonus Pagination
  **************************/
-
-// Appel de la vue
-
-// fermeture de la connexion (bonne pratique)
