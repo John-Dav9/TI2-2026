@@ -30,16 +30,61 @@ function addGuestbook(PDO $db,
 ): bool
 {
     // traitement des données backend (SECURITE)
+    $usermail=filter_var($usermail,FILTER_VALIDATE_EMAIL);
+    $message=htmlspecialchars(trim(strip_tags($message)));
+    $firstname = htmlspecialchars(trim(strip_tags($firstname)));
+    $lastname = htmlspecialchars(trim(strip_tags($lastname)));
+    $phone = htmlspecialchars(trim(strip_tags($phone)));
+    $postcode = htmlspecialchars(trim(strip_tags($postcode)));
 
     // si pas de données complètes ou ne correspondant pas à nos attentes, on renvoie false
-    return false;
+    if($usermail===false             ||
+    strlen($usermail)>120            ||
+    empty($firstname)            ||
+    strlen($firstname)<5         ||
+    strlen($firstname)>120        ||
+    empty($lastname)                 ||
+    strlen($lastname)<5              ||
+    strlen($lastname)>120           ||
+    empty($message)          ||
+    strlen($message)<5       ||
+    strlen($message)>300        ||
+    empty($phone)          ||
+    strlen($phone)<5       ||
+    strlen($phone)>300      ||
+    empty($postcode)          ||
+    strlen($postcode)<5       ||
+    strlen($postcode)>300
+    ) return false;
+    
     // requête préparée obligatoire !
+    $prepare = $db->prepare("
+    INSERT INTO `guestbook`(`firstname`,`lastname`,`usermail`,`phone`,`postcode`,`message` )
+    VALUES(:firstname,:lastname,:usermail,:phone,:postcode,:message); 
+    ");
 
     // si l'insertion a réussi
+    $prepare->bindValue(':usermail',$usermail);
+    $prepare->bindValue(':firstname',$firstname);
+    $prepare->bindValue(':lastname',$lastname);
+    $prepare->bindValue(':phone',$phone);
+    $prepare->bindValue(':postcode',$postcode);
+    $prepare->bindValue(':message',$message);
     // on renvoie true
+    $retour=$prepare->execute();
+    return $retour;
     // sinon, on renvoie false
 
 }
+ 
+    
+    # on met nos val dans 
+
+    # on exécute la requete
+    // true en cas de réussite, false en cas d'échec
+
+//   var_dump($db,$mail,$message);
+
 
 /***************************
  * Sans le Bonus Pagination
