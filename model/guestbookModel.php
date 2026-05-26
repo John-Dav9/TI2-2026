@@ -100,12 +100,18 @@ function addGuestbook(PDO $db,
  */
 function getAllGuestbook(PDO $db): array
 {
+    $stmt=$db->query("SELECT * FROM `guestbook` ORDER BY `post_date` DESC");
+    $result= $stmt-> fetchAll(PDO::FETCH_ASSOC);
+    $stmt->closeCursor();
+    return $result;
     // try catch
     // si la requête a réussi,
     // bonne pratique, fermez le curseur
     // renvoyer le tableau de(s) message(s)
-    return [];
+    // return [];
 }
+
+
 
 /**************************
  * Pour le Bonus Pagination
@@ -119,6 +125,7 @@ function getAllGuestbook(PDO $db): array
  */
 function getNbTotalGuestbook(PDO $db): int
 {
+   
 
     // bonne pratique, fermez le curseur,
     // renvoyez le nombre total de messages
