@@ -22,6 +22,31 @@ require_once URL_BASE . "/model/guestbookModel.php";
  * le mode fetch à tableau associatif
  */
 
+try {
+    $connectDB = new PDO(
+        dsn: MARIA_DSN, 
+        username: DB_LOGIN, 
+        password:  DB_PWD, 
+        // options, on active les erreurs pour ne pas avoir de pages blanches en cas de désaxtivation (optionnel depuis PHP 8.0)
+        options:[
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            ]
+    );
+
+    // option, on peut les ajouter après la connexion (donc en dehors de options:), sauf pour la connexion permanente, ici il s'agit du format de récupération php tableaux associatifs
+    $connectDB->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    // arrêt et affichage de l'erreur (ev dev)
+    die($e->getMessage());
+}
+
+// on a envoyé le formulaire 
+if(isset($_POST['prenom'],$_POST['nom'],$_POST['code_postal'],$_POST['telephone'],$_POST['email'],$_POST['text_comment'])){
+    // envoi de nos var nécessaires à l'insertion 
+    $addCommentaire=addGuestbook($connectDB,$_POST['firstname'],$_POST['lastname'],$_POST['postcode'],$_POST['phone'],$_POST['useremail'],$_POST['message']);
+}
+
+$comments=getAllGuestbook($connectDB);
 /*
  * Si le formulaire a été soumis
  */
@@ -31,6 +56,7 @@ require_once URL_BASE . "/model/guestbookModel.php";
 // si l'insertion a réussi
 
 // on redirige vers la page actuelle (ou on affiche un message de succès)
+
 
 // sinon, on affiche un message d'erreur
 
@@ -54,12 +80,43 @@ require_once URL_BASE . "/model/guestbookModel.php";
 
 # on veut récupérer les messages de la page courante
 
+$countComments = getNbTotalGuestbook($connectDB);
+
+
+
+if (!isset($_GET['p'])){
+    // nous sommes dans l'accueil
+    include URL_BASE . "/view/guestbookView.php";
+}elseif(in_array($_GET['p'],ARRAY_VALID_PAGES)){
+
+    // si il existe la variable de pagination
+    if(isset($_GET[PAGINATION_GET])){
+        $page = (int) $_GET[PAGINATION_GET];
+    }else{
+        $page = 1;
+    }
+
+    // récupération de $comments en utilisant la fonction de pagination
+    $comments = getGuestbookPagination($connectDB,$page,PAGINATION_NB);
+
+    
+    // création de la pagination en html avec les variables get nécessaires
+    $pagination = pagination($countComments,'?p=comments',PAGINATION_GET,$page,PAGINATION_NB);   
+
+    
+    include URL_BASE . "/view/guestbookView.php";
+}else {
+     
+    //  include ROOT_PROJECT."/view/error404.php";
+}
+
+// bonne pratique, fermeture de connexion
+$connectDB=null;
+
 /**************************
  * Fin du Bonus Pagination
  **************************/
 
 // Appel de la vue
-
-include URL_BASE . "/view/guestbookView.php";
 
 // fermeture de la connexion (bonne pratique)
