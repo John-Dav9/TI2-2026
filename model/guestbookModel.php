@@ -100,7 +100,7 @@ function addGuestbook(PDO $db,
  */
 function getAllGuestbook(PDO $db): array
 {
-    $stmt=$db->query("SELECT * FROM `guestbook` ORDER BY `post_date` DESC");
+    $stmt=$db->query("SELECT * FROM `guestbook`");
     $result= $stmt-> fetchAll(PDO::FETCH_ASSOC);
     $stmt->closeCursor();
     return $result;
@@ -125,7 +125,7 @@ function getAllGuestbook(PDO $db): array
  */
 function getNbTotalGuestbook(PDO $db): int
 {
-    $stmt = $db->query("SELECT COUNT(*) AS count FROM commentaire");
+    $stmt = $db->query("SELECT COUNT(*) AS count FROM guestbook");
     return (int) $stmt->fetch()['count'];
 
     // bonne pratique, fermez le curseur,
@@ -147,14 +147,18 @@ function getNbTotalGuestbook(PDO $db): int
  */
 function getGuestbookPagination(PDO $db, int $pageActu=1, int $limit=5): array
 {
-    // Requête préparée obligatoire !
-    // Le $offset et le $limit sont des entiers, il faut donc les passer
+ 
     // en paramètres de la requête préparée en tant qu'entiers !
     // si la requête a réussi,
     // bonne pratique, fermez le curseur
     // renvoyer le tableau de(s) message(s) (vide si pas de résultats)
     return [];
 }
+
+ // pour touver l'offset (départ)
+
+    // préparation de la requête
+    // on passe les variables à lar requêtes, ! ils doivent passer au format integer !
 
 # Pour afficher la pagination dans la vue
 // FONCTION de pagination
