@@ -35,7 +35,6 @@ try {
         // options, on active les erreurs pour ne pas avoir de pages blanches en cas de désaxtivation (optionnel depuis PHP 8.0)
         options:[
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ]
     );
 
@@ -131,7 +130,7 @@ if (!isset($_GET['p'])){
         $comments = getGuestbookPagination($db, $page, PAGINATION_NB);
         $pagination = pagination($countComments, '?', PAGINATION_GET, $page, PAGINATION_NB);
     }else {
-            
+
     $db=null;
 }
 include URL_BASE . "/view/guestbookView.php";
