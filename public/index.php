@@ -14,6 +14,8 @@ require_once "../config.php";
 // chargement du modèle de la table guestbook
 require_once URL_BASE . "/model/guestbookModel.php";
 
+
+
 /*
  * Connexion à la base de données en utilisant PDO
  * Avec un try catch pour gérer les erreurs de connexion

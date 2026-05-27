@@ -1,5 +1,29 @@
 <?php
+/** @var int $countComments */
+/** @var array $comments */
+/** @var string $messageTitle */
 # view/guestbookView.php
+
+    function displayDateFr(string $date): string
+    {
+        $timestamp = strtotime($date);
+        return date('d/m/Y à H\hi', $timestamp);
+    }
+
+    function oldValue(string $name): string
+    {
+        return htmlspecialchars($_POST[$name] ?? '', ENT_QUOTES, 'UTF-8');
+    }
+    $countComments = count($comments);
+    $messageTitle = '';
+    if ($countComments === 0) {
+        $messageTitle = 'pas encore de message';
+    } elseif ($countComments === 1) {
+        $messageTitle = 'Il y a 1 message';
+    } else {
+        $messageTitle = 'Il y a ' . $countComments . ' messages';
+    }
+
 ?>
 <!doctype html>
 <html lang="fr">
@@ -13,97 +37,90 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<h1>TI2 | Livre d'or</h1>
-<!-- Formulaire d'ajout d'un message -->
- <form id="contactForm" class="form-card" novalidate method="post">
-
-  <div class="field">
-    <label for="firstname">Nom</label>
-    <input type="text" id="firstname" name="firstname" placeholder="John" value="<?= ($_POST['firstname'] ?? '') ?>">
-    <small class="field-error"></small>
-  </div>
-
-  <div class="field">
-    <label for="lastname">Prénom</label>
-    <input type="text" id="lastname" name="lastname" placeholder="David" value="<?= ($_POST['lastname'] ?? '') ?>">
-    <small class="field-error"></small>
-  </div>
-
-  <div class="field">
-    <label for="usermail">Email</label>
-    <input type="email" id="usermail" name="usermail" placeholder="johndavid@email.com" value="<?= ($_POST['usermail'] ?? '') ?>">
-    <small class="field-error"></small>
-  </div>
-
-  <div class="field">
-    <label for="phone">Téléphone</label>
-    <input type="text" id="phone" name="phone" placeholder="+32471234567" value="<?= ($_POST['phone'] ?? '') ?>">
-    <small class="field-error"></small>
-  </div>
-
-  <div class="field">
-    <label for="postcode">Code Postal</label>
-    <input type="text" id="postcode" name="postcode" value="<?= ($_POST['postcode'] ?? '') ?>">
-    <small class="field-error"></small>
-  </div>
-
-   <div class="field">
-    <label for="commentaire">message</label>
-    <textarea id="commentaire" name="commentaire" rows="6"><?= ($_POST['message'] ?? '') ?></textarea>
-    <small class="field-error"><?= ($errors['commentaire'] ?? '') ?></small>
-  </div>
-
-  <button class="btn" type="submit">Envoyer</button>
-</form>
-<!-- Si pas de message -->
-<h3>Pas encore de message</h3>
-<!-- Si 1 message -->
-<h3>Il y a 1 message</h3>
-<!-- Si plusieurs messages -->
-<h3>Il y a X messages</h3>
-<div>
-    <section class="section_wrapper">
-        <section class="comments_section"> 
-            <?php
-                $nbComment = $countComments;
-                if (empty($nbComment)):
-            ?>
-            <h2>Il n'y a pas encore de messages</h2>
-            <?php
-                // il y a au mois un message
-                else:
-                    // preparation du pluriel si on a plus d'un message
-                    $pluriel = $nbComment > 1 ? "s" : "";
-                
-                // affichage de la pagination    
-                echo $pagination; 
-            ?>
-            
-        </section>
-         <section class="comments_section">
-         <h2>Message<?= $pluriel ?> récent<?= $pluriel ?> (<?= $nbComment ?>)</h2>
-        <?php
-            foreach ($comments as $comment):
-        ?>
-        <div class="comments_card">
-            <div class="comment_avatar">
-                <?= strtoupper(substr($comment['email'], 0, 2)) ?>
-            </div>
-            <div class="comment_body">
-                <div class="comment_meta">
-                    <span class="write_by"><?= htmlspecialchars($comment['email']) ?></span>
-                    <span class="comment_date"><?= $comment['post_date'] ?></span>
-                </div>
-                <p><?= nl2br(htmlspecialchars($comment['text_comment'])) ?></p>
-            </div>
+<main class="page">
+    <header class="header-card">
+        <img class="logo" src="img/favicon.png" alt="Logo du livre d'or">
+        <div class="header-text">
+            <h1>Livre d'Or</h1>
+            <p>Laissez une trace de votre passage !</p>
         </div>
-        <?php
-            endforeach;
-            // affichage de la pagination    
-                echo $pagination; 
-            endif;
-        ?>
-    </div>
+        <button type="button" id="toggle-theme" class="theme-button">🌙 Dark Mode</button>
+    </header>
+
+    <section class="top-section">
+        <div class="illustration" aria-hidden="true">📖</div>
+
+        <form id="guestbookForm" class="form-card" method="post" action="" novalidate>
+            <h2>Votre message</h2>
+
+            <div id="messages" class="message-box <?= $feedbackClass ?>">
+                <?= htmlspecialchars($feedback, ENT_QUOTES, 'UTF-8') ?>
+            </div>
+
+            <div class="field">
+                <label for="firstname">Prénom</label>
+                <input type="text" id="firstname" name="firstname" placeholder="Ex: John" value="<?= oldValue('firstname') ?>" required>
+            </div>
+
+            <div class="field">
+                <label for="lastname">Nom</label>
+                <input type="text" id="lastname" name="lastname" placeholder="Ex: David" value="<?= oldValue('lastname') ?>" required>
+            </div>
+
+            <div class="field">
+                <label for="usermail">E-mail</label>
+                <input type="email" id="usermail" name="usermail" placeholder="johndavid@example.com" value="<?= oldValue('usermail') ?>" required>
+            </div>
+
+            <div class="field">
+                <label for="postcode">Code postal</label>
+                <input type="text" id="postcode" name="postcode" placeholder="Ex: 1000" value="<?= oldValue('postcode') ?>" required>
+            </div>
+
+            <div class="field">
+                <label for="phone">Téléphone</label>
+                <input type="text" id="phone" name="phone" placeholder="Ex: 0032498150882" value="<?= oldValue('phone') ?>" required>
+            </div>
+
+            <div class="field">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" maxlength="300" rows="6" placeholder="Un petit mot..." required><?= oldValue('message') ?></textarea>
+            </div>
+
+            <p id="counter" class="counter">0 / 300 caractères</p>
+
+            <button class="submit-button" type="submit">Envoyer le message</button>
+        </form>
+    </section>
+
+    <section class="comments-section">
+        <h2>Messages récents - <?= htmlspecialchars($messageTitle, ENT_QUOTES, 'UTF-8') ?></h2>
+        <?= $pagination ?>
+
+        <?php if (empty($comments)): ?>
+            <article class="comment-card">
+                <p>Aucun message à afficher pour le moment.</p>
+            </article>
+        <?php else: ?>
+            <?php foreach ($comments as $comment): ?>
+                <article class="comment-card">
+                    <div class="comment-head">
+                        <p>
+                            <strong><?= $comment['firstname'] ?> <?= $comment['lastname'] ?></strong>
+                            <span><?= $comment['usermail'] ?></span>
+                        </p>
+                        <time datetime="<?= $comment['datemessage'] ?>">
+                            Le ( <?= displayDateFr($comment['datemessage']) ?> )
+                        </time>
+                    </div>
+                    <p class="comment-message"><?= nl2br($comment['message']) ?></p>
+                </article>
+            <?php endforeach; ?>
+        <?php endif; ?>
+
+        <?= $pagination ?>
+    </section>
+</main>
 
 <!-- Liste des messages -->
 <ul>
