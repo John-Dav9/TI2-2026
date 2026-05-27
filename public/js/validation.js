@@ -140,3 +140,97 @@
 
    Bon travail !
    ========================================================================= */
+// -definition des variable et importation
+const form = document.getElementById('guestbookForm');
+const messages = document.getElementById('messages');
+const firstname = document.getElementById('firstname');
+const lastname = document.getElementById('lastname');
+const usermail = document.getElementById('usermail');
+const postcode = document.getElementById('postcode');
+const phone = document.getElementById('phone');
+const message = document.getElementById('message');
+const counter = document.getElementById('counter');
+const toggleTheme = document.getElementById('toggle-theme');
+
+// 2- fonctuon pour afficher le message
+
+function showMessage(text, type) {
+    messages.textContent = text;
+    messages.className = 'message-box ' + type;
+}
+
+// 3- fontion pour le compteur de message
+
+function updateCounter() {
+    counter.textContent = message.value.length + ' / 300 caractères';
+
+    if (message.value.length >= 280) {
+        counter.classList.add('danger');
+    } else {
+        counter.classList.remove('danger');
+    }
+}
+
+message.addEventListener('input', updateCounter);
+updateCounter();
+
+// 4 - Validation des regex pour le formulaire
+
+form.addEventListener('submit', function (event) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const postcodeRegex = /^[0-9]{4}$/;
+    const phoneRegex = /^(?:\+32|0)\s?4(?:\d\s?){8}$/;
+
+    
+
+    const firstValue = firstname.value.trim();
+    const lastValue = lastname.value.trim();
+    const emailValue = usermail.value.trim();
+    const postcodeValue = postcode.value.trim();
+    const phoneValue = phone.value.trim();
+    const messageValue = message.value.trim();
+
+    if (firstValue === '' || lastValue === '' || emailValue === '' || postcodeValue === '' || phoneValue === '' || messageValue === '') {
+        event.preventDefault();
+        showMessage('Tous les champs sont obligatoires ❌', 'error');
+        return;
+    }
+
+    if (!emailRegex.test(emailValue)) {
+        event.preventDefault();
+        showMessage('Adresse e-mail invalide ❌', 'error');
+        return;
+    }
+
+    if (!postcodeRegex.test(postcodeValue)) {
+        event.preventDefault();
+        showMessage('Le code postal belge doit contenir exactement 4 chiffres ❌', 'error');
+        return;
+    }
+
+    if (!phoneRegex.test(phoneValue)) {
+        event.preventDefault();
+        showMessage('Le numéro belge doit commencer par 04 et contenir 10 chiffres ❌', 'error');
+        return;
+    }
+
+    if (messageValue.length > 300) {
+        event.preventDefault();
+        showMessage('Le message ne peut pas dépasser 300 caractères ❌', 'error');
+        return;
+    }
+
+    showMessage('Toutes les informations sont valides ✅', 'success');
+});
+
+// 5 - le dark-mode/white-mode
+
+toggleTheme.addEventListener('click', function () {
+    document.body.classList.toggle('dark-mode');
+
+    if (document.body.classList.contains('dark-mode')) {
+        toggleTheme.textContent = '☀️ White Mode';
+    } else {
+        toggleTheme.textContent = '🌙 Dark Mode';
+    }
+});

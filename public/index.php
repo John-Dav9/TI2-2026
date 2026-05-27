@@ -46,9 +46,10 @@ try {
 }
 
 // on a envoyé le formulaire 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['firstname'], $_POST['lastname'], $_POST['usermail'], $_POST['phone'], $_POST['postcode'], $_POST['message'])) {
-        $isAdded = addGuestbook(
+
+if(isset($_POST['prenom'],$_POST['nom'],$_POST['code_postal'],$_POST['telephone'],$_POST['email'],$_POST['text_comment'])){
+    // envoi de nos var nécessaires à l'insertion 
+    $isAdded = addGuestbook(
             $db,
             $_POST['firstname'],
             $_POST['lastname'],
@@ -57,20 +58,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['postcode'],
             $_POST['message']
         );
-
-        if ($isAdded) {
-            $feedback = 'Merci pour votre nouveau message';
-            $feedbackClass = 'success';
-            $_POST = [];
-        } else {
-            $feedback = "Problème lors de l'envoi du message";
-            $feedbackClass = 'error';
-        }
+    if ($isAdded) {
+        $feedback = 'Merci pour votre nouveau message';
+        $feedbackClass = 'success';
+        $_POST = [];
     } else {
-        $feedback = 'Tous les champs du formulaire sont obligatoires';
+        $feedback = "Problème lors de l'envoi du message";
         $feedbackClass = 'error';
     }
+} else {
+    $feedback = 'Tous les champs du formulaire sont obligatoires';
+    $feedbackClass = 'error';
 }
+
 
 $comments=getAllGuestbook($db);
 /*

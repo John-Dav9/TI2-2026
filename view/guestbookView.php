@@ -37,6 +37,7 @@
     <title>TI2 | Livre d'or</title>
     <link rel="icon" type="image/png" href="img/favicon.png">
     <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery-3.7.1.min.js"></script>
 </head>
 <body>
 <main class="page">
@@ -128,11 +129,11 @@
 <!-- Pagination (BONUS) -->
 <?php
 // À commenter quand on a fini de tester
-echo "<h3>Nos var_dump() pour le débugage</h3>";
-echo '<p>$_POST</p>';
-var_dump($_POST);
-echo '<p>$_GET</p>';
-var_dump($_GET);
+// echo "<h3>Nos var_dump() pour le débugage</h3>";
+// echo '<p>$_POST</p>';
+// var_dump($_POST);
+// echo '<p>$_GET</p>';
+// var_dump($_GET);
 ?>
 
 <script src="js/validation.js"></script>
