@@ -2,6 +2,8 @@
 /** @var int $countComments */
 /** @var array $comments */
 /** @var string $messageTitle */
+/** @var string $messageTitle */
+/** @var string $messageTitle */
 # view/guestbookView.php
 
     function displayDateFr(string $date): string
@@ -101,6 +103,7 @@
             <article class="comment-card">
                 <p>Aucun message à afficher pour le moment.</p>
             </article>
+            <!-- Liste des messages -->
         <?php else: ?>
             <?php foreach ($comments as $comment): ?>
                 <article class="comment-card">
@@ -122,21 +125,6 @@
     </section>
 </main>
 
-<!-- Liste des messages -->
-<ul>
-    <li>
-        <p><strong>firstname lastname</strong></p>
-        <p><em>datemessage</em></p>
-        <p>message</p>
-    </li>
-    <!-- Autres messages -->
-    <li>
-        <p><strong>firstname lastname</strong></p>
-        <p><em>datemessage</em></p>
-        <p>message</p>
-    </li>
-</ul>
-etc ...
 <!-- Pagination (BONUS) -->
 <?php
 // À commenter quand on a fini de tester

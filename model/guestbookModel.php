@@ -100,10 +100,16 @@ function addGuestbook(PDO $db,
  */
 function getAllGuestbook(PDO $db): array
 {
-    $stmt=$db->query("SELECT * FROM `guestbook`");
-    $result= $stmt-> fetchAll(PDO::FETCH_ASSOC);
-    $stmt->closeCursor();
-    return $result;
+    try {
+        $sql = "SELECT * FROM `guestbook` ORDER BY `datemessage` DESC";
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        $messages = $stmt->fetchAll();
+        $stmt->closeCursor();
+        return $messages;
+    } catch (Exception $e) {
+        die($e->getMessage());
+    }
     // try catch
     // si la requête a réussi,
     // bonne pratique, fermez le curseur
@@ -125,8 +131,15 @@ function getAllGuestbook(PDO $db): array
  */
 function getNbTotalGuestbook(PDO $db): int
 {
-    $stmt = $db->query("SELECT COUNT(*) AS count FROM guestbook");
-    return (int) $stmt->fetch()['count'];
+    try {
+        $stmt = $db->prepare("SELECT COUNT(*) AS total FROM `guestbook`");
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stmt->closeCursor();
+        return (int) $result['total'];
+    } catch (Exception $e) {
+        die($e->getMessage());
+    }
 
     // bonne pratique, fermez le curseur,
     // renvoyez le nombre total de messages
@@ -147,18 +160,28 @@ function getNbTotalGuestbook(PDO $db): int
  */
 function getGuestbookPagination(PDO $db, int $pageActu=1, int $limit=5,): array
 {
-    $offset = ($pageActu - 1) * 5;
-    $limit = 5;
-    // Requête préparée obligatoire !
-    $sql = "SELECT * FROM `guestbook` ORDER BY `post_date` DESC LIMIT :offset, :limit;";
-    $stmt = $db->prepare($sql);
-    // Le $offset et le $limit sont des entiers, il faut donc les passer
-    $stmt->bindValue("offset",$offset,PDO::PARAM_INT);
-    $stmt->bindValue("limit",$limit,PDO::PARAM_INT);
-    $stmt->execute();
-    $return = $stmt->fetchAll();
-    $stmt->closeCursor();
-    return $return;
+    try {
+        if ($pageActu < 1) {
+            $pageActu = 1;
+        }
+
+        $offset = ($pageActu - 1) * $limit;
+
+        $sql = "SELECT * FROM `guestbook`
+                ORDER BY `datemessage` DESC
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $messages = $stmt->fetchAll();
+        $stmt->closeCursor();
+        return $messages;
+    } catch (Exception $e) {
+        die($e->getMessage());
+    }
     // en paramètres de la requête préparée en tant qu'entiers !
     // si la requête a réussi,
     // bonne pratique, fermez le curseur

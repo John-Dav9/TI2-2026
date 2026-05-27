@@ -14,7 +14,10 @@ require_once "../config.php";
 // chargement du modèle de la table guestbook
 require_once URL_BASE . "/model/guestbookModel.php";
 
-
+$feedback = '';
+$feedbackClass = '';
+$pagination = '';
+$page = 1;
 
 /*
  * Connexion à la base de données en utilisant PDO
@@ -32,6 +35,7 @@ try {
         // options, on active les erreurs pour ne pas avoir de pages blanches en cas de désaxtivation (optionnel depuis PHP 8.0)
         options:[
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ]
     );
 
@@ -43,9 +47,30 @@ try {
 }
 
 // on a envoyé le formulaire 
-if(isset($_POST['prenom'],$_POST['nom'],$_POST['code_postal'],$_POST['telephone'],$_POST['email'],$_POST['text_comment'])){
-    // envoi de nos var nécessaires à l'insertion 
-    $addCommentaire=addGuestbook($db,$_POST['firstname'],$_POST['lastname'],$_POST['postcode'],$_POST['phone'],$_POST['useremail'],$_POST['message']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['firstname'], $_POST['lastname'], $_POST['usermail'], $_POST['phone'], $_POST['postcode'], $_POST['message'])) {
+        $isAdded = addGuestbook(
+            $db,
+            $_POST['firstname'],
+            $_POST['lastname'],
+            $_POST['usermail'],
+            $_POST['phone'],
+            $_POST['postcode'],
+            $_POST['message']
+        );
+
+        if ($isAdded) {
+            $feedback = 'Merci pour votre nouveau message';
+            $feedbackClass = 'success';
+            $_POST = [];
+        } else {
+            $feedback = "Problème lors de l'envoi du message";
+            $feedbackClass = 'error';
+        }
+    } else {
+        $feedback = 'Tous les champs du formulaire sont obligatoires';
+        $feedbackClass = 'error';
+    }
 }
 
 $comments=getAllGuestbook($db);
@@ -82,8 +107,6 @@ $comments=getAllGuestbook($db);
 
 # on veut récupérer les messages de la page courante
 
-$countComments = getNbTotalGuestbook($db);
-
 
 
 if (!isset($_GET['p'])){
@@ -92,22 +115,23 @@ if (!isset($_GET['p'])){
 }elseif(in_array($_GET['p'],ARRAY_VALID_PAGES)){
 
     // si il existe la variable de pagination
-    if(isset($_GET[PAGINATION_GET])){
+    if(isset($_GET[PAGINATION_GET]) && ctype_digit($_GET[PAGINATION_GET])){
         $page = (int) $_GET[PAGINATION_GET];
     }else{
         $page = 1;
     }
 
+
     // récupération de $comments en utilisant la fonction de pagination
-    $comments = getGuestbookPagination($db,$page,PAGINATION_NB);
 
     
-    // création de la pagination en html avec les variables get nécessaires
-    $pagination = pagination($countComments,'?p=comments',PAGINATION_GET,$page,PAGINATION_NB);   
+    // création de la pagination en html avec les variables get nécessaires  
 
-    
+        $countComments = getNbTotalGuestbook($db);
+        $comments = getGuestbookPagination($db, $page, PAGINATION_NB);
+        $pagination = pagination($countComments, '?', PAGINATION_GET, $page, PAGINATION_NB);
     }else {
-        
+            
     $db=null;
 }
 include URL_BASE . "/view/guestbookView.php";
