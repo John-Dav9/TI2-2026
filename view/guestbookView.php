@@ -37,7 +37,7 @@
     <title>TI2 | Livre d'or</title>
     <link rel="icon" type="image/png" href="img/favicon.png">
     <link rel="stylesheet" href="css/style.css">
-    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
 <main class="page">

@@ -50,11 +50,10 @@ function addGuestbook(PDO $db,
     strlen($message)<5       ||
     strlen($message)>300        ||
     empty($phone)          ||
-    strlen($phone)<5       ||
-    strlen($phone)>300      ||
+    strlen($phone)<10      ||
+    strlen($phone)>20     ||
     empty($postcode)          ||
-    strlen($postcode)<5       ||
-    strlen($postcode)>300
+    strlen($postcode)!=4       
     ) return false;
     
     // requête préparée obligatoire !
@@ -64,9 +63,9 @@ function addGuestbook(PDO $db,
     ");
 
     // si l'insertion a réussi
-    $prepare->bindValue(':usermail',$usermail);
     $prepare->bindValue(':firstname',$firstname);
     $prepare->bindValue(':lastname',$lastname);
+    $prepare->bindValue(':usermail',$usermail);
     $prepare->bindValue(':phone',$phone);
     $prepare->bindValue(':postcode',$postcode);
     $prepare->bindValue(':message',$message);

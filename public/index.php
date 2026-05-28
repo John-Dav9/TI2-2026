@@ -47,8 +47,9 @@ try {
 
 // on a envoyé le formulaire 
 
-if(isset($_POST['prenom'],$_POST['nom'],$_POST['code_postal'],$_POST['telephone'],$_POST['email'],$_POST['text_comment'])){
-    // envoi de nos var nécessaires à l'insertion 
+if(isset($_POST['firstname'],$_POST['lastname'],$_POST['postcode'],$_POST['phone'],$_POST['usermail'],$_POST['message'])){
+   
+// envoi de nos var nécessaires à l'insertion 
     $isAdded = addGuestbook(
             $db,
             $_POST['firstname'],

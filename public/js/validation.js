@@ -101,6 +101,7 @@
        • "☀️ White Mode" quand on est en mode sombre (clic = passer en clair)
    - L'icône doit correspondre au mode vers lequel on bascule.
 
+
    IMPLÉMENTATION SUGGÉRÉE :
    - Utiliser une classe CSS (ex : .dark-mode) sur le <body>.
    - Faire le toggle de cette classe en jQuery avec .toggleClass().
